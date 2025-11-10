@@ -23,7 +23,7 @@ const ChevronDown = () => <span className={styles.chevronDown}>↓</span>;
 /* ===========================
    CONFIGURAÇÃO - WEB3FORMS
    =========================== */
-const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY || '629e1fa2-7019-494f-8d96-d3df243d980e';
+const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY ;
 const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
 
 /* ===========================
