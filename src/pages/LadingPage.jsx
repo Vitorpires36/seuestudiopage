@@ -23,13 +23,13 @@ const ChevronDown = () => <span className={styles.chevronDown}>↓</span>;
 /* ===========================
    CONFIGURAÇÃO - WEB3FORMS
    =========================== */
-const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY;
+const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY ;
 const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
 
 /* ===========================
    UTILITÁRIOS
    =========================== */
-async function fetchWithTimeout(url, options = {}, timeout = 15000) {
+async function fetchWithTimeout(url, options = {}, timeout = 10000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
   
@@ -66,29 +66,23 @@ const ERROR_MESSAGES = {
   timeout: 'A requisição demorou demais. Tente novamente.',
   validation: 'Verifique as informações e tente novamente.',
   server: 'Nossos servidores estão ocupados. Aguarde um momento.',
-  spam: 'Seu e-mail foi marcado como spam. Use um e-mail diferente.',
-  invalid_key: 'Problema de configuração. Entre em contato com o suporte.',
   default: 'Algo deu errado. Tente novamente em instantes.'
 };
 
 function getUserFriendlyError(error) {
-  console.log('Error details:', error);
-  
   if (error.message === 'timeout') return ERROR_MESSAGES.timeout;
   if (error.message?.includes('Failed to fetch')) return ERROR_MESSAGES.network;
-  if (error.message?.includes('400')) return ERROR_MESSAGES.spam;
-  if (error.message?.includes('401')) return ERROR_MESSAGES.invalid_key;
-  if (error.message?.includes('spam')) return ERROR_MESSAGES.spam;
-  
   return ERROR_MESSAGES.default;
 }
 
 /* ============================
-   INTEGRAÇÃO DIFY - SIMPLIFICADA
+   INTEGRAÇÃO DIFY - COM ESTILO PERSONALIZADO
    ============================ */
 const DifyChatIntegration = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
-    // Configuração do Dify
+    // Configuração do Dify com identidade visual personalizada
     window.difyChatbotConfig = {
       token: '0GvHj0wC6k0AKGMx',
       inputs: {
@@ -105,11 +99,8 @@ const DifyChatIntegration = () => {
     script.defer = true;
     
     script.onload = () => {
-      console.log('Dify chatbot carregado com sucesso');
-    };
-
-    script.onerror = (error) => {
-      console.error('Failed to load Dify chatbot script:', error);
+      setIsLoaded(true);
+      applyCustomStyles();
     };
 
     document.head.appendChild(script);
@@ -121,6 +112,98 @@ const DifyChatIntegration = () => {
       }
     };
   }, []);
+
+  const applyCustomStyles = () => {
+    if (document.getElementById('dify-custom-styles')) return;
+
+    const style = document.createElement('style');
+    style.id = 'dify-custom-styles';
+    style.textContent = `
+      /* Botão flutuante personalizado */
+      #dify-chatbot-bubble-button {
+        background: linear-gradient(135deg, #00d1ff 0%, #9b59b6 100%) !important;
+        border: 3px solid #fff !important;
+        box-shadow: 0 8px 32px rgba(0,209,255,0.5) !important;
+        width: 65px !important;
+        height: 65px !important;
+        animation: floatIcon 3s ease-in-out infinite !important;
+      }
+      
+      #dify-chatbot-bubble-button:hover {
+        transform: scale(1.15) rotate(5deg) !important;
+        box-shadow: 0 12px 40px rgba(0,209,255,0.7) !important;
+      }
+      
+      /* Janela do chat personalizada */
+      #dify-chatbot-bubble-window {
+        width: 380px !important;
+        height: 600px !important;
+        border-radius: 16px !important;
+        background: rgba(17, 17, 17, 0.95) !important;
+        backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.8) !important;
+      }
+      
+      /* Header do chat personalizado */
+      #dify-chatbot-bubble-window .bubble-window-header {
+        background: linear-gradient(135deg, #00d1ff, #9b59b6) !important;
+        color: #fff !important;
+        padding: 14px 16px !important;
+        border-radius: 16px 16px 0 0 !important;
+      }
+      
+      /* Mensagens do bot */
+      #dify-chatbot-bubble-window .message-bot {
+        background: linear-gradient(135deg, #222, #2a2a2a) !important;
+        color: #fff !important;
+        border-radius: 16px 16px 16px 4px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+      }
+      
+      /* Mensagens do usuário */
+      #dify-chatbot-bubble-window .message-user {
+        background: linear-gradient(135deg, #00d1ff 0%, #0097e6 100%) !important;
+        color: #fff !important;
+        border-radius: 16px 16px 4px 16px !important;
+        box-shadow: 0 2px 8px rgba(0, 209, 255, 0.3) !important;
+      }
+      
+      /* Área de input */
+      #dify-chatbot-bubble-window .bubble-window-input {
+        background: linear-gradient(to top, #141414, #1a1a1a) !important;
+        border-top: 1px solid rgba(255,255,255,0.1) !important;
+        padding: 12px !important;
+      }
+      
+      #dify-chatbot-bubble-window .bubble-window-input input {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        color: #fff !important;
+        border-radius: 24px !important;
+        padding: 12px 16px !important;
+      }
+      
+      #dify-chatbot-bubble-window .bubble-window-input input:focus {
+        box-shadow: 0 0 0 2px rgba(155,89,182,0.3) !important;
+        border-color: #9b59b6 !important;
+      }
+      
+      /* Botão de enviar */
+      #dify-chatbot-bubble-window .bubble-window-input button {
+        background: linear-gradient(135deg, #00d1ff, #0097e6) !important;
+        border-radius: 50% !important;
+        color: #fff !important;
+      }
+      
+      /* Animações personalizadas */
+      @keyframes floatIcon {
+        0%, 100% { transform: translateY(0) !important; }
+        50% { transform: translateY(-10px) !important; }
+      }
+    `;
+    document.head.appendChild(style);
+  };
 
   return null;
 };
@@ -149,36 +232,6 @@ const LandingPage = () => {
     message: '' 
   });
   const [headerScrolled, setHeaderScrolled] = useState(false);
-
-  // Verificar WebAssembly
-  useEffect(() => {
-    const checkWebAssemblySupport = async () => {
-      try {
-        if (typeof WebAssembly === 'object' && typeof WebAssembly.instantiate === 'function') {
-          console.log('WebAssembly suportado');
-        } else {
-          console.warn('WebAssembly não suportado');
-        }
-      } catch (error) {
-        console.warn('WebAssembly error:', error);
-      }
-    };
-    
-    checkWebAssemblySupport();
-  }, []);
-
-  // Verificar chave Web3Forms
-  useEffect(() => {
-    if (!WEB3FORMS_KEY) {
-      console.error('Web3Forms access key não encontrada!');
-      setFormStatus({ 
-        loading: false, 
-        success: false, 
-        error: true, 
-        message: 'Erro de configuração. Chave Web3Forms não encontrada.' 
-      });
-    }
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -265,17 +318,6 @@ const LandingPage = () => {
     const form = e.target;
     const email = form.email.value.trim();
     
-    // Verificar se a chave existe
-    if (!WEB3FORMS_KEY) {
-      setFormStatus({ 
-        loading: false, 
-        success: false, 
-        error: true, 
-        message: 'Erro de configuração. Entre em contato com o suporte.' 
-      });
-      return;
-    }
-    
     if (!isValidEmail(email)) {
       setFormStatus({ 
         loading: false, 
@@ -289,80 +331,51 @@ const LandingPage = () => {
     setFormStatus({ loading: true, success: false, error: false, message: '' });
     
     try {
-      // Usar FormData que é mais compatível com Web3Forms
       const formData = new FormData();
       formData.append('access_key', WEB3FORMS_KEY);
       formData.append('email', email);
-      formData.append('subject', 'Nova inscrição - Waitlist SeuEstúdio.ai');
-      formData.append('from_name', 'SeuEstúdio.ai');
-      formData.append('botcheck', ''); // Campo honeypot vazio
-      
-      console.log('Enviando para Web3Forms:', { 
-        email: email, 
-        hasKey: !!WEB3FORMS_KEY 
-      });
+      formData.append('subject', 'Nova inscrição - Lista de Acesso SeuEstúdio.ai');
+      formData.append('from_name', 'SeuEstúdio.ai Landing Page');
+      formData.append('source', 'waitlist_form');
       
       const res = await fetchWithTimeout(
         WEB3FORMS_URL, 
         { 
           method: 'POST', 
-          body: formData // Usar FormData em vez de JSON
+          body: formData
         },
-        15000
+        10000
       );
       
-      console.log('Status da resposta:', res.status);
+      const data = await res.json();
       
-      let data;
-      try {
-        data = await res.json();
-        console.log('Resposta Web3Forms:', data);
-      } catch (parseError) {
-        console.error('Erro ao parsear resposta:', parseError);
-        throw new Error('Resposta inválida do servidor');
-      }
-      
-      if (res.ok && data.success) {
+      if (data.success) {
         setFormStatus({ 
           loading: false, 
           success: true, 
           error: false, 
-          message: '🎉 Sucesso! Você está na lista de acesso VIP. Em breve entraremos em contato!' 
+          message: '🎉 Sucesso! Você está na lista de acesso VIP. Verifique seu e-mail.' 
         });
         form.reset();
         
-        // Analytics
         if (window.gtag) {
           window.gtag('event', 'waitlist_submit', { method: 'form' });
         }
       } else {
-        // Tratamento específico de erros do Web3Forms
-        if (data.message?.toLowerCase().includes('spam')) {
-          throw new Error(ERROR_MESSAGES.spam);
-        } else if (data.message?.toLowerCase().includes('invalid access key')) {
-          throw new Error(ERROR_MESSAGES.invalid_key);
-        } else if (data.message) {
-          throw new Error(data.message);
-        } else {
-          throw new Error(`Erro ${res.status}: ${data.message || 'Erro desconhecido'}`);
-        }
+        throw new Error(data.message || 'Erro ao processar inscrição');
       }
     } catch (err) {
       console.error('Waitlist error:', err);
-      
-      const userMessage = getUserFriendlyError(err);
-      
       setFormStatus({ 
         loading: false, 
         success: false, 
         error: true, 
-        message: userMessage 
+        message: getUserFriendlyError(err)
       });
     } finally {
-      // Limpar mensagem após 8 segundos
       setTimeout(() => {
         setFormStatus(prev => ({ ...prev, message: '' }));
-      }, 8000);
+      }, 6000);
     }
   };
 
@@ -394,7 +407,7 @@ const LandingPage = () => {
         </div>
       </header>
 
-      {/* Chat Dify Integrado */}
+      {/* Chat Dify Integrado com estilo personalizado */}
       <DifyChatIntegration />
 
       {/* Hero Section */}
@@ -423,28 +436,10 @@ const LandingPage = () => {
                   disabled={formStatus.loading} 
                   aria-label="Seu e-mail para inscrição na lista VIP"
                 />
-                {/* Campo honeypot para bots - escondido */}
-                <input 
-                  type="checkbox" 
-                  name="botcheck" 
-                  className={styles.honeyPot} 
-                  tabIndex="-1" 
-                  autoComplete="off"
-                />
                 <SubmitButton loading={formStatus.loading}>
                   {formStatus.loading ? 'Entrando...' : 'Garantir Acesso VIP'}
                 </SubmitButton>
               </form>
-              {!WEB3FORMS_KEY && (
-                <p style={{ 
-                  marginTop: '12px', 
-                  color: '#ff6b6b', 
-                  fontSize: '0.9rem',
-                  textAlign: 'center'
-                }}>
-                  ⚠️ Configuração incompleta. Entre em contato com o suporte.
-                </p>
-              )}
               <p style={{ 
                 marginTop: '12px', 
                 color: 'rgba(255,255,255,0.7)', 
@@ -592,14 +587,6 @@ const LandingPage = () => {
                 className={styles.emailInput} 
                 disabled={formStatus.loading} 
                 aria-label="Seu e-mail para inscrição na lista VIP"
-              />
-              {/* Campo honeypot para bots - escondido */}
-              <input 
-                type="checkbox" 
-                name="botcheck" 
-                className={styles.honeyPot} 
-                tabIndex="-1" 
-                autoComplete="off"
               />
               <SubmitButton loading={formStatus.loading}>
                 {formStatus.loading ? 'Entrando...' : 'Quero Meu Acesso VIP'}
