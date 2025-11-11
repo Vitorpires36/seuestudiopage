@@ -4,6 +4,21 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Content Security Policy PERMISSIVA para desenvolvimento -->
+    <meta 
+      http-equiv="Content-Security-Policy" 
+      content="default-src * 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' data: blob:; 
+               script-src * 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'; 
+               style-src * 'unsafe-inline'; 
+               connect-src *; 
+               font-src *; 
+               img-src * data: blob:; 
+               media-src *; 
+               object-src *; 
+               frame-src *;"
+    />
+    
     <title>seuestudiopage</title>
   </head>
   <body>
